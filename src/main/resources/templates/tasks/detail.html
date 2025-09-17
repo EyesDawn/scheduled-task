@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'任务详情 - ' + ${task.name}">任务详情</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/web/tasks">
+                <i class="fas fa-clock"></i> 定时任务管理系统
+            </a>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        <!-- Flash Messages -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Task Header -->
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h1>
+                    <i class="fas fa-tasks"></i> <span th:text="${task.name}"></span>
+                    <span th:switch="${task.status}" class="badge ms-2">
+                        <span th:case="'ACTIVE'" class="badge bg-success">活跃</span>
+                        <span th:case="'INACTIVE'" class="badge bg-secondary">未激活</span>
+                        <span th:case="'PAUSED'" class="badge bg-warning">暂停</span>
+                        <span th:case="'ERROR'" class="badge bg-danger">错误</span>
+                    </span>
+                </h1>
+                <p class="text-muted" th:text="${task.description}"></p>
+            </div>
+            
+            <div class="btn-group" role="group">
+                <a th:href="@{'/web/tasks/' + ${task.id} + '/edit'}" class="btn btn-outline-primary">
+                    <i class="fas fa-edit"></i> 编辑
+                </a>
+                
+                <form th:if="${task.status == T(com.eyesdawn.scheduledtask.model.ScheduledTask.TaskStatus).INACTIVE}" 
+                      th:action="@{'/web/tasks/' + ${task.id} + '/start'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-play"></i> 启动
+                    </button>
+                </form>
+                
+                <form th:if="${task.status == T(com.eyesdawn.scheduledtask.model.ScheduledTask.TaskStatus).ACTIVE}" 
+                      th:action="@{'/web/tasks/' + ${task.id} + '/stop'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-stop"></i> 停止
+                    </button>
+                </form>
+                
+                <form th:if="${task.status == T(com.eyesdawn.scheduledtask.model.ScheduledTask.TaskStatus).ACTIVE}" 
+                      th:action="@{'/web/tasks/' + ${task.id} + '/pause'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-pause"></i> 暂停
+                    </button>
+                </form>
+                
+                <form th:if="${task.status == T(com.eyesdawn.scheduledtask.model.ScheduledTask.TaskStatus).PAUSED}" 
+                      th:action="@{'/web/tasks/' + ${task.id} + '/resume'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-play"></i> 恢复
+                    </button>
+                </form>
+
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash"></i> 删除
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Task Details -->
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-info-circle"></i> 任务信息</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <th width="30%">任务ID:</th>
+                                    <td th:text="${task.id}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Cron表达式:</th>
+                                    <td><code th:text="${task.cronExpression}"></code></td>
+                                </tr>
+                                <tr>
+                                    <th>任务类:</th>
+                                    <td><code th:text="${task.jobClass}"></code></td>
+                                </tr>
+                                <tr>
+                                    <th>最大重试:</th>
+                                    <td th:text="${task.maxRetries}"></td>
+                                </tr>
+                                <tr>
+                                    <th>超时时间:</th>
+                                    <td><span th:text="${task.timeoutSeconds}"></span> 秒</td>
+                                </tr>
+                                <tr>
+                                    <th>创建时间:</th>
+                                    <td th:text="${#temporals.format(task.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                </tr>
+                                <tr>
+                                    <th>更新时间:</th>
+                                    <td th:text="${#temporals.format(task.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div th:if="${task.jobData}" class="mt-3">
+                            <h6>任务参数:</h6>
+                            <pre class="bg-light p-2" th:text="${task.jobData}"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Dependencies -->
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="fas fa-link"></i> 任务依赖</h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addDependencyModal">
+                            <i class="fas fa-plus"></i> 添加依赖
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${dependencies.empty}" class="text-muted">
+                            <i class="fas fa-info-circle"></i> 该任务没有依赖其他任务
+                        </div>
+                        
+                        <div th:unless="${dependencies.empty}">
+                            <div th:each="dep : ${dependencies}" class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                <div>
+                                    <strong th:text="${dep.dependentTask.name}"></strong>
+                                    <small class="text-muted d-block" th:text="${dep.dependentTask.description}"></small>
+                                </div>
+                                <form th:action="@{'/dependencies/' + ${dep.id} + '/remove'}" method="post" class="d-inline">
+                                    <input type="hidden" name="taskId" th:value="${task.id}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Execution History -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="fas fa-history"></i> 执行历史</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${executions.content.empty}" class="text-muted">
+                    <i class="fas fa-info-circle"></i> 该任务还没有执行记录
+                </div>
+                
+                <div th:unless="${executions.content.empty}" class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>执行ID</th>
+                                <th>状态</th>
+                                <th>开始时间</th>
+                                <th>结束时间</th>
+                                <th>持续时间</th>
+                                <th>重试次数</th>
+                                <th>结果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="exec : ${executions.content}">
+                                <td th:text="${exec.id}"></td>
+                                <td>
+                                    <span th:switch="${exec.status}" class="badge">
+                                        <span th:case="'SUCCESS'" class="badge bg-success">成功</span>
+                                        <span th:case="'FAILED'" class="badge bg-danger">失败</span>
+                                        <span th:case="'RUNNING'" class="badge bg-primary">运行中</span>
+                                        <span th:case="'TIMEOUT'" class="badge bg-warning">超时</span>
+                                        <span th:case="'CANCELLED'" class="badge bg-secondary">取消</span>
+                                        <span th:case="'RETRY_SCHEDULED'" class="badge bg-info">重试中</span>
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(exec.startTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td th:text="${exec.endTime != null ? #temporals.format(exec.endTime, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+                                <td th:text="${exec.durationMillis != null ? exec.durationMillis + 'ms' : '-'}"></td>
+                                <td th:text="${exec.retryAttempt}"></td>
+                                <td>
+                                    <span th:if="${exec.result}" th:text="${#strings.abbreviate(exec.result, 50)}" title="${exec.result}"></span>
+                                    <span th:if="${exec.errorMessage}" class="text-danger" th:text="${#strings.abbreviate(exec.errorMessage, 50)}" title="${exec.errorMessage}"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a th:href="@{/web/tasks}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> 返回列表
+            </a>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除任务 "<strong th:text="${task.name}"></strong>" 吗？</p>
+                    <p class="text-danger"><i class="fas fa-warning"></i> 此操作不可恢复！</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <form th:action="@{'/web/tasks/' + ${task.id} + '/delete'}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger">确认删除</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Dependency Modal -->
+    <div class="modal fade" id="addDependencyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加任务依赖</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{'/web/tasks/' + ${task.id} + '/dependencies'}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="dependentTaskId" class="form-label">依赖任务</label>
+                            <select class="form-select" id="dependentTaskId" name="dependentTaskId" required>
+                                <option value="">请选择要依赖的任务</option>
+                                <!-- This would need to be populated with available tasks -->
+                            </select>
+                            <div class="form-text">选择该任务需要等待完成的其他任务</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">添加依赖</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: scheduled-task
+  datasource:
+    url: jdbc:h2:mem:scheduledtask
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  quartz:
+    job-store-type: memory
+    properties:
+      org.quartz.scheduler.instanceName: ScheduledTaskScheduler
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.threadPool.threadCount: 10
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.eyesdawn.scheduledtask: DEBUG
+    org.hibernate.SQL: DEBUG
