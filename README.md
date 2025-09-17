@@ -1,5 +1,9 @@
 # 定时任务管理系统 (Scheduled Task Management System)
 
+<div align="center">
+  <img src="src/main/resources/static/img/logo.svg" alt="Scheduled Task Management System Logo" width="120" height="120">
+</div>
+
 一个基于Spring Boot的企业级定时任务管理系统，提供完整的Web界面管理功能。
 
 ## ✨ 主要特性

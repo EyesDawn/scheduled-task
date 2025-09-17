@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="#007bff" stroke="#0056b3" stroke-width="2"/>
+  
+  <!-- Clock face -->
+  <circle cx="60" cy="60" r="45" fill="#ffffff" stroke="#0056b3" stroke-width="2"/>
+  
+  <!-- Hour markers -->
+  <g stroke="#007bff" stroke-width="2" stroke-linecap="round">
+    <!-- 12 o'clock -->
+    <line x1="60" y1="20" x2="60" y2="28" />
+    <!-- 3 o'clock -->
+    <line x1="100" y1="60" x2="92" y2="60" />
+    <!-- 6 o'clock -->
+    <line x1="60" y1="100" x2="60" y2="92" />
+    <!-- 9 o'clock -->
+    <line x1="20" y1="60" x2="28" y2="60" />
+  </g>
+  
+  <!-- Clock hands -->
+  <g stroke="#0056b3" stroke-linecap="round">
+    <!-- Hour hand pointing to 2 -->
+    <line x1="60" y1="60" x2="75" y2="45" stroke-width="4" />
+    <!-- Minute hand pointing to 12 -->
+    <line x1="60" y1="60" x2="60" y2="35" stroke-width="3" />
+  </g>
+  
+  <!-- Center dot -->
+  <circle cx="60" cy="60" r="4" fill="#0056b3"/>
+  
+  <!-- Task/schedule symbols -->
+  <!-- Small gear icon in bottom right -->
+  <g transform="translate(85,85) scale(0.8)" fill="#007bff">
+    <circle cx="0" cy="0" r="8" fill="#ffffff" stroke="#007bff" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="4" fill="#007bff"/>
+    <!-- Gear teeth -->
+    <polygon points="-2,-8 2,-8 3,-10 1,-10 -1,-10 -3,-10" fill="#007bff"/>
+    <polygon points="8,-2 8,2 10,3 10,1 10,-1 10,-3" fill="#007bff"/>
+    <polygon points="2,8 -2,8 -3,10 -1,10 1,10 3,10" fill="#007bff"/>
+    <polygon points="-8,2 -8,-2 -10,-3 -10,-1 -10,1 -10,3" fill="#007bff"/>
+  </g>
+  
+  <!-- Schedule/calendar lines in top left -->
+  <g transform="translate(25,25)" stroke="#007bff" stroke-width="1.5" fill="none">
+    <rect x="0" y="0" width="12" height="10" rx="1" fill="#ffffff"/>
+    <line x1="2" y1="3" x2="10" y2="3"/>
+    <line x1="2" y1="5" x2="8" y2="5"/>
+    <line x1="2" y1="7" x2="6" y2="7"/>
+  </g>
+</svg>
