@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>定时任务管理系统</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/favicon.svg}">
     <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link th:href="@{/css/custom.css}" rel="stylesheet">
@@ -12,7 +13,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="/web/tasks">
-                <i class="fas fa-clock"></i> 定时任务管理系统
+                <img th:src="@{/img/logo-small.svg}" alt="Logo" width="24" height="24" class="me-2"> 定时任务管理系统
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
