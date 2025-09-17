@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${task.id != null} ? '编辑任务 - ' + ${task.name} : '新增任务'">任务表单</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/web/tasks">
+                <i class="fas fa-clock"></i> 定时任务管理系统
+            </a>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">
+                            <i th:class="${task.id != null} ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                            <span th:text="${task.id != null} ? '编辑任务' : '新增任务'"></span>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{${task.id != null} ? '/web/tasks/' + ${task.id} : '/web/tasks'}" 
+                              method="post" th:object="${task}">
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label">任务名称 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                                <div class="form-text">任务的唯一标识名称</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">描述</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+                                <div class="form-text">任务的详细描述</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cronExpression" class="form-label">Cron表达式 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="cronExpression" th:field="*{cronExpression}" required>
+                                <div class="form-text">
+                                    支持精确到秒的cron表达式。例如: <code>0/30 * * * * ?</code> (每30秒执行一次)
+                                    <br>格式: 秒 分 时 日 月 星期 [年]
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="jobClass" class="form-label">任务类 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="jobClass" th:field="*{jobClass}" required>
+                                    <option value="">请选择任务类</option>
+                                    <option value="com.eyesdawn.scheduledtask.job.SampleJob">示例任务</option>
+                                </select>
+                                <div class="form-text">执行任务的Java类</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="jobData" class="form-label">任务参数</label>
+                                <textarea class="form-control" id="jobData" th:field="*{jobData}" rows="3"></textarea>
+                                <div class="form-text">JSON格式的任务参数，如: {"param1": "value1", "param2": "value2"}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="maxRetries" class="form-label">最大重试次数</label>
+                                        <input type="number" class="form-control" id="maxRetries" th:field="*{maxRetries}" min="0" max="10">
+                                        <div class="form-text">失败时的最大重试次数</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="timeoutSeconds" class="form-label">超时时间(秒)</label>
+                                        <input type="number" class="form-control" id="timeoutSeconds" th:field="*{timeoutSeconds}" min="1" max="3600">
+                                        <div class="form-text">任务执行超时时间</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/web/tasks}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> 返回列表
+                                </a>
+                                <div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> 保存任务
+                                    </button>
+                                    <a th:if="${task.id != null}" th:href="@{'/web/tasks/' + ${task.id}}" class="btn btn-outline-info">
+                                        <i class="fas fa-eye"></i> 查看详情
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Cron Expression Helper -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-question-circle"></i> Cron表达式示例
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><code>0/30 * * * * ?</code> - 每30秒执行一次</li>
+                                    <li><code>0 0/5 * * * ?</code> - 每5分钟执行一次</li>
+                                    <li><code>0 0 * * * ?</code> - 每小时执行一次</li>
+                                    <li><code>0 0 0 * * ?</code> - 每天午夜执行一次</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><code>0 0 12 * * ?</code> - 每天中午12点执行</li>
+                                    <li><code>0 0 0 ? * MON</code> - 每周一午夜执行</li>
+                                    <li><code>0 0 0 1 * ?</code> - 每月1号午夜执行</li>
+                                    <li><code>0 0 0 1 1 ? *</code> - 每年1月1日执行</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

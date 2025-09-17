@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: scheduled-task-test
+  datasource:
+    url: jdbc:h2:mem:scheduledtask-test
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  quartz:
+    job-store-type: memory
+
+logging:
+  level:
+    root: WARN
+    com.eyesdawn.scheduledtask: INFO
